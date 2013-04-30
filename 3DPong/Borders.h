@@ -9,12 +9,14 @@ class Border
 private:
 	float z;
 	float direction;
-	sf::Vector2f sizeVector;
+	sf::Vector2f minSize;
+	sf::Vector2f maxSize;
 	sf::Vector2f position;
-	float velocity;
+	sf::Vector3f velocity;
 	float scale;
 	float courtLength;
 public:
+	sf::Vector2f size;
 	Border::Border(float screenX, float screenY, float s, float cL);
 	sf::RectangleShape rect;
 	void moveBorder(sf::Time updateTime);

@@ -5,12 +5,12 @@
 #include "Borders.h"
 //#include <iostream> for testing purposes
 
-#define AI_SCALE 0.5
-#define PADDLE_LENGTH 90
-#define PADDLE_WIDTH 75
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-#define COURT_LENGTH 100
+#define AI_SCALE 0.5f
+#define PADDLE_LENGTH 90.0f
+#define PADDLE_WIDTH 75.0f
+#define SCREEN_WIDTH 800.0f
+#define SCREEN_HEIGHT 600.0f
+#define COURT_LENGTH 100.0f
 
 int main()
 {
@@ -20,7 +20,7 @@ int main()
 	AIPaddle opponent(SCREEN_WIDTH, SCREEN_HEIGHT, 0.005, 100, 50, AI_SCALE); // initialize opponent paddle
 	Border border(SCREEN_WIDTH, SCREEN_HEIGHT, AI_SCALE, COURT_LENGTH);
 	sf::Event ev; //event checker
-	sf::Clock clock; //clock
+	sf::Clock clock, updateClock; //clocks
 	sf::Time bounceTime, currentTime, updateTime; //time between bounces, current time, and time between updates.
 
 	bool gameOn = false;
@@ -39,7 +39,7 @@ int main()
 		if (gameOn)
 			{
 				currentTime = clock.getElapsedTime(); //update times
-				updateTime = clock.getElapsedTime();
+				updateTime = updateClock.getElapsedTime();
 
 				if (bounceTime.asSeconds() <= currentTime.asSeconds()) //if it's time to bounce
 				{
@@ -50,7 +50,8 @@ int main()
 				if (updateTime.asSeconds() >= 0.01f) //if it's time to update (once every ten milliseconds)
 				{
 					border.moveBorder(updateTime); //update the border's location
-					updateTime = sf::seconds(0);
+					updateTime.Zero;
+					updateClock.restart();
 				}
 			}
 
@@ -66,6 +67,7 @@ int main()
 				if (ev.type == sf::Event::MouseButtonPressed)
 				{
 					clock.restart();
+					updateClock.restart();
 					bounceTime = sf::seconds(2.0f);
 					bounceTime = border.reverseDirection(bounceTime);
 					gameOn = true;
