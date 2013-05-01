@@ -1,8 +1,9 @@
 #include "Borders.h"
+//#include <iostream>
 
 Border::Border(float screenX, float screenY, float s, float cL)
 {
-	z = 0;
+	z = 100;
 	size.x = screenX;
 	size.y = screenY;
 	maxSize.x = screenX;
@@ -39,9 +40,8 @@ sf::Time Border::reverseDirection(sf::Time bounceTime)
 
 void Border::moveBorder(sf::Time updateTime)
 {
-	sf::Vector3f discrepancy;
 
-	discrepancy.z= -direction * velocity.z * updateTime.asSeconds(); //calculate the distance the border should travel on the z axis; negative because z is backwards
+	discrepancy.z = direction * velocity.z * updateTime.asSeconds(); //calculate the distance the border should travel on the z axis
 	discrepancy.x = direction * velocity.x * updateTime.asSeconds(); //calculate the size change on the x axis
 	discrepancy.y = direction * velocity.y * updateTime.asSeconds(); //calculate the size change on the y axis
 
@@ -55,20 +55,4 @@ void Border::moveBorder(sf::Time updateTime)
 	position.y += -discrepancy.y / 2; //stupid programming notation.  Why can't we be scientific instead?
 
 	rect.setPosition(position);
-}
-
-bool Border::inAICourt()
-{
-	if (z >= courtLength)
-		return true;
-	else
-		return false;
-}
-
-bool Border::inPlayerCourt()
-{
-	if (z <= 0)
-		return true;
-	else
-		return false;
 }

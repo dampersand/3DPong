@@ -4,25 +4,28 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
-class Border
+class Border //moving border to help player determine Z axis
 {
-private:
-	float z;
-	float direction;
-	sf::Vector2f minSize;
-	sf::Vector2f maxSize;
-	sf::Vector2f position;
-	sf::Vector3f velocity;
-	float scale;
-	float courtLength;
+protected:
+	float z;						//z axis location; probably should have used a vector
+	float direction;				//automated z-direction scalar
+	sf::Vector2f minSize;			//vector for border size
+	sf::Vector2f maxSize;			//vector for border size
+	sf::Vector2f position;			//position of moving border
+	sf::Vector3f velocity;			//changing speed of border
+	float scale;					//help make various calculations
+	float courtLength;				//length of ball court
+	sf::Vector3f discrepancy;
+
 public:
-	sf::Vector2f size;
 	Border::Border(float screenX, float screenY, float s, float cL);
+	sf::Vector2f size;
 	sf::RectangleShape rect;
-	void moveBorder(sf::Time updateTime);
+
 	sf::Time reverseDirection(sf::Time bounceTime);
-	bool inAICourt();
-	bool inPlayerCourt();
+	void moveBorder(sf::Time updateTime);
+
+	friend class Ball;
 };
 
 
