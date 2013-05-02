@@ -24,6 +24,7 @@ public:
 
 	sf::Time reverseDirection(sf::Time bounceTime);
 	void moveBorder(sf::Time updateTime);
+	void resetBorder();
 
 	friend class Ball;
 };

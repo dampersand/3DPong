@@ -23,11 +23,14 @@ class Ball
 		bool inPlayerCourt();
 		
 		void moveBall(sf::Time updateTime);
-		void changeVelocity();
+		void changeVelocity(sf::Vector2f paddleCenter);
+		void resetBall(float screenX, float screenY);
 		bool touchingTopWall();
 		bool touchingBottomWall();
 		bool touchingLeftWall();
 		bool touchingRightWall();
+
+		bool touchingPaddle(sf::RectangleShape rect);
 };
 
 #endif //_BALL_H guard word

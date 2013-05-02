@@ -56,3 +56,16 @@ void Border::moveBorder(sf::Time updateTime)
 
 	rect.setPosition(position);
 }
+
+void Border::resetBorder()
+{
+	size = maxSize;
+	rect.setSize(size);
+	rect.setPosition(0,0);
+	position = rect.getPosition();
+	direction = 0;
+	z = 100;
+	velocity.z = 0;
+	velocity.x = 0;
+	velocity.y = 0;
+}

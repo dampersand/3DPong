@@ -7,8 +7,8 @@ Ball::Ball(float screenX, float screenY, float r, float s, Border * b)
 	maxRadius = r;
 	position.x = screenX/2 - maxRadius;
 	position.y = screenY/2 - maxRadius;
-	velocity.x = 100;
-	velocity.y = 80;
+	velocity.x = 0;
+	velocity.y = 0;
 	circle.setRadius(maxRadius);
 	circle.setPosition(position);
 	circle.setFillColor(sf::Color(255,255,0, 160));
@@ -18,7 +18,7 @@ Ball::Ball(float screenX, float screenY, float r, float s, Border * b)
 
 bool Ball::inAICourt()
 {
-	if (border->z < 0)
+	if (border->z <= 0)
 		return true;
 	else
 		return false;
@@ -26,7 +26,7 @@ bool Ball::inAICourt()
 
 bool Ball::inPlayerCourt()
 {
-	if (border->z > border->courtLength)
+	if (border->z >= border->courtLength)
 		return true;
 	else
 		return false;
@@ -86,7 +86,7 @@ void Ball::moveBall(sf::Time updateTime)
 
 
 
-	position.x += (newRadius - oldRadius);									//reposition due to radius change
+	position.x += (newRadius - oldRadius);										//reposition due to radius change
 	position.y += -(newRadius - oldRadius);										//negative due to absurd programming notation of up being negative
 	position.x += (newLocation.x - (oldCenter.x - border->maxSize.x/2));		//reposition due to perspective
 	position.y += (newLocation.y - (oldCenter.y - border->maxSize.y/2));		//negative due to absurd programming notation of up being negative
@@ -99,8 +99,11 @@ void Ball::moveBall(sf::Time updateTime)
 
 }
 
-void Ball::changeVelocity()
+void Ball::changeVelocity(sf::Vector2f paddleCenter)
 {
+	
+	velocity.x += 3*(center.x - paddleCenter.x);
+	velocity.y += 3*(center.y - paddleCenter.y);
 }
 
 bool Ball::touchingTopWall()
@@ -133,4 +136,26 @@ bool Ball::touchingRightWall()
 		return true;
 	else
 		return false;
+}
+
+bool Ball::touchingPaddle(sf::RectangleShape rect)
+{
+	sf::Rect<float> ballRect;
+	const sf::Rect<float> paddleRect = rect.getGlobalBounds();
+	ballRect = circle.getGlobalBounds();
+
+	if (ballRect.intersects(paddleRect))
+		return true;
+	else
+		return false;
+}
+
+void Ball::resetBall(float screenX, float screenY)
+{
+	position.x = screenX/2 - maxRadius;
+	position.y = screenY/2 - maxRadius;
+	velocity.x = 0;
+	velocity.y = 0;
+	circle.setRadius(maxRadius);
+	circle.setPosition(position);
 }
