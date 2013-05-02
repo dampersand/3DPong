@@ -1,40 +1,7 @@
-========================================================================
-    CONSOLE APPLICATION : 3DPong Project Overview
-========================================================================
+3DPong
 
-AppWizard has created this 3DPong application for you.
+dampersand
 
-This file contains a summary of what you will find in each of the files that
-make up your 3DPong application.
+This is an experiment with the SFML SDK to create a 3DPong style game.  The game itself is a watered-down clone of curveball, a flash game on the web.
 
-
-3DPong.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
-
-3DPong.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
-
-3DPong.cpp
-    This is the main application source file.
-
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named 3DPong.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+The project is currently as-complete-as-I-want-it, meaning I may SOMEDAY come back and add a pretty gui, hash out the playing field, create a user-friendly button for increasing difficulty, etc (or add the ability to create an acceleration by spinning the ball)... but for now, I've gotten what I wanted out of the project - practice with SFML and proof-of-concept of the game itself.
