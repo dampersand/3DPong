@@ -1,9 +1,8 @@
 #include "Borders.h"
-//#include <iostream>
 
 Border::Border(float screenX, float screenY, float s, float cL)
 {
-	z = 100;
+	z = cL;
 	size.x = screenX;
 	size.y = screenY;
 	maxSize.x = screenX;
@@ -24,14 +23,17 @@ Border::Border(float screenX, float screenY, float s, float cL)
 	minSize.y = s*screenY;
 }
 
-sf::Time Border::reverseDirection(sf::Time bounceTime)
+sf::Time Border::reverseDirection(sf::Time bounceTime, float safety)
 {
 	if (direction == -1)
 		direction = 1;
 	else
 		direction = -1;
 
-	bounceTime = bounceTime * 0.95f;
+	if (bounceTime.asSeconds() <= 2*safety) //add a factor of safety of 2 - never let bounceTime get below your refresh rate.
+		bounceTime = sf::seconds(2*safety);
+	else
+		bounceTime = bounceTime * 0.97f;
 	velocity.z = courtLength / bounceTime.asSeconds();
 	velocity.x = (maxSize.x - minSize.x) / bounceTime.asSeconds();
 	velocity.y = (maxSize.y - minSize.y) / bounceTime.asSeconds();

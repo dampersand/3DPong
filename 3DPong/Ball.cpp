@@ -1,19 +1,22 @@
 #include "Ball.h"
-#include <iostream>
 
-Ball::Ball(float screenX, float screenY, float r, float s, Border * b)
+Ball::Ball(float screenX, float screenY, float r, float s, float decay, Border * b)
 {
 	minRadius = r * s;
 	maxRadius = r;
+	decayRate = decay;
+	lastBounce.x = screenX/2;
+	lastBounce.y = screenY/2;
 	position.x = screenX/2 - maxRadius;
 	position.y = screenY/2 - maxRadius;
 	velocity.x = 0;
 	velocity.y = 0;
+	acceleration.x = 0;
+	acceleration.y = 0;
 	circle.setRadius(maxRadius);
 	circle.setPosition(position);
-	circle.setFillColor(sf::Color(255,255,0, 160));
+	circle.setFillColor(sf::Color(255,255,0));
 	border = b;
-	rzRatio = (maxRadius - minRadius) / (border->courtLength); //ratio of delta r to delta z - if you know delZ, you can determine delR.
 }
 
 bool Ball::inAICourt()
@@ -27,6 +30,14 @@ bool Ball::inAICourt()
 bool Ball::inPlayerCourt()
 {
 	if (border->z >= border->courtLength)
+		return true;
+	else
+		return false;
+}
+
+bool Ball::inCurveZone(sf::Time currentTime)
+{
+	if (currentTime.asSeconds() < 0.08 && border->direction == -1)
 		return true;
 	else
 		return false;
@@ -47,17 +58,18 @@ void Ball::moveBall(sf::Time updateTime)
 
 /////////////////////////////////////////////////////////
 	//Change radius due to z velocity
-	newRadius = rzRatio * zee + minRadius;	//linear formula of radius change wrt z
+	newRadius = (((maxRadius - minRadius) / (border->courtLength))   *   zee) + minRadius;	//linear formula of radius change wrt z
 	oldRadius = circle.getRadius();			//going to fuck with the radius, save the change in deltaR
 
 	circle.setRadius(newRadius);
 
 /////////////////////////////////////////////////////////
 	//Set up repositionings
-	oldCenter.x = position.x + oldRadius; //set up reposition due to perspective
+/////////////////////////////////////////////////////////
+	//set up reposition due to perspective
+	oldCenter.x = position.x + oldRadius;
 	oldCenter.y = position.y + oldRadius;
 
-	//Okay.  Get ready.
 	//oldcenter - border->maxSize.x/2 = the old location.
 	newLength.x = border->maxSize.x/2 - border->position.x;
 	newLength.y = border->maxSize.y/2 - border->position.y;
@@ -68,7 +80,26 @@ void Ball::moveBall(sf::Time updateTime)
 	newLocation.x = ((oldCenter.x - border->maxSize.x/2) * newLength.x) / oldLength.x;
 	newLocation.y = ((oldCenter.y - border->maxSize.y/2) * newLength.y) / oldLength.y;
 
-	if ((velocity.y < 0) && touchingTopWall()) //set up reposition due to velocity
+
+	//set up velocity change due to scale change using law of ratios
+	velocity.x = (velocity.x * newLength.x) / oldLength.x;
+	velocity.y = (velocity.y * newLength.y) / oldLength.y;
+
+	//set up acceleration change due to scale change using law of ratios
+	acceleration.x = (acceleration.x * newLength.x) / oldLength.x;
+	acceleration.y = (acceleration.y * newLength.y) / oldLength.y;
+
+	//set up velocity change due to acceleration
+	velocity.x += acceleration.x * updateTime.asSeconds();
+	velocity.y += acceleration.y * updateTime.asSeconds();
+
+	//decay acceleration to simulate Magnus effect
+	acceleration.x *= decayRate;
+	acceleration.y *= decayRate;
+
+
+	//set up reposition due to velocity
+	if ((velocity.y < 0) && touchingTopWall())
 		velocity.y *= -1;
 	if ((velocity.x > 0) && touchingRightWall())
 		velocity.x *= -1;
@@ -77,16 +108,13 @@ void Ball::moveBall(sf::Time updateTime)
 	if ((velocity.x < 0) && touchingLeftWall())
 		velocity.x *= -1;
 
-	//set up velocity change due to scale change using law of ratios
-	velocity.x = (velocity.x * newLength.x) / oldLength.x;
-	velocity.y = (velocity.y * newLength.y) / oldLength.y;
-
+	//calculate what reposition should be due to velocity
 	discrepancy.x = velocity.x * updateTime.asSeconds();
 	discrepancy.y = velocity.y * updateTime.asSeconds();
 
 
 
-	position.x += (newRadius - oldRadius);										//reposition due to radius change
+	position.x += -(newRadius - oldRadius);										//reposition due to radius change
 	position.y += -(newRadius - oldRadius);										//negative due to absurd programming notation of up being negative
 	position.x += (newLocation.x - (oldCenter.x - border->maxSize.x/2));		//reposition due to perspective
 	position.y += (newLocation.y - (oldCenter.y - border->maxSize.y/2));		//negative due to absurd programming notation of up being negative
@@ -101,9 +129,17 @@ void Ball::moveBall(sf::Time updateTime)
 
 void Ball::changeVelocity(sf::Vector2f paddleCenter)
 {
-	
-	velocity.x += 3*(center.x - paddleCenter.x);
-	velocity.y += 3*(center.y - paddleCenter.y);
+	velocity.x += (center.x - paddleCenter.x)/5;
+	velocity.y += (center.y - paddleCenter.y)/5;
+
+	lastBounce.x = paddleCenter.x; //record where the paddle was when it hit you.
+	lastBounce.y = paddleCenter.y;
+}
+
+void Ball::addCurve(sf::Vector2f paddleCenter)
+{
+	acceleration.x += 12*(lastBounce.x - paddleCenter.x);
+	acceleration.y += 14*(lastBounce.y - paddleCenter.y);
 }
 
 bool Ball::touchingTopWall()
@@ -158,4 +194,6 @@ void Ball::resetBall(float screenX, float screenY)
 	velocity.y = 0;
 	circle.setRadius(maxRadius);
 	circle.setPosition(position);
+	lastBounce.x = screenX/2;
+	lastBounce.y = screenY/2;
 }

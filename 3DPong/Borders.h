@@ -22,11 +22,12 @@ public:
 	sf::Vector2f size;
 	sf::RectangleShape rect;
 
-	sf::Time reverseDirection(sf::Time bounceTime);
+	sf::Time reverseDirection(sf::Time bounceTime, float safety); //safety is a variable related to the refresh rate - bounceTime should NEVER get below safety
 	void moveBorder(sf::Time updateTime);
 	void resetBorder();
 
-	friend class Ball;
+	friend class Ball; //the ball will follow the borders.
+	friend class AIPaddle; //the paddle must know information from the borders.
 };
 
 
